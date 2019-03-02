@@ -27,12 +27,21 @@ class TodoListViewController: UITableViewController {
     // mutable array of todos
     var itemArray = [ "Find Mike", "Buy Eggos", "Defeat Demogorgon" ]
     
+    // Stores key-value pairs in the App's sandbox across launches
+    let defaults = UserDefaults.standard
     
     // MARK: - VIEW DID LOAD
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-    }
+        
+        // Loading previous todos from user's sandbox. Tries to initialise the items const using the
+        // data stored in the user's info.plist file for the app. If not nil, sets itemArray to this value
+        if let items = defaults.array( forKey: "TodoListArray" ) as? [String] {
+            print( "Loaded previous data successfully!" )
+            itemArray = items
+        }
+    }   // end function viewDidLoad
     
     // MARK: - TABLE VIEW DATA METHODS
     // method that defines how many TableViewCells need to be populated - one cell per item in list
@@ -88,6 +97,9 @@ class TodoListViewController: UITableViewController {
         let action = UIAlertAction( title: "Add Item", style: .default ) { (action) in
             // append the todo user has entered in the textField to the itemsArray
             self.itemArray.append( textField.text! )        // because inside a closure
+            
+            // save the updated item array to the UserDefaults object for data persistence
+            self.defaults.set( self.itemArray, forKey: "TodoListArray" )
             
             // update the TableView to show the newly added todo list item
             self.tableView.reloadData()
