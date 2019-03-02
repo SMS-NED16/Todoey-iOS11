@@ -24,7 +24,8 @@ import UIKit
 class TodoListViewController: UITableViewController {
 
     // MARK: - ATTRIBUTES
-    let itemArray = [ "Find Mike", "Buy Eggos", "Defeat Demogorgon" ]
+    // mutable array of todos
+    var itemArray = [ "Find Mike", "Buy Eggos", "Defeat Demogorgon" ]
     
     
     // MARK: - VIEW DID LOAD
@@ -74,5 +75,36 @@ class TodoListViewController: UITableViewController {
         
     }   // end function tableView didSelectRow
     
-    
+    // MARK: - ADD NEW ITEMS
+    // IBAction that allows user to enter new todo using an popup with a textField
+    @IBAction func AddButtonPressed(_ sender: UIBarButtonItem) {
+        // local textField variable that is accessible inside both closures
+        var textField = UITextField()
+
+        // Create a new alert or popup with a specific title, an optional message/prompt, and a style
+        let alert = UIAlertController(title: "Add New Todoey Item", message: "", preferredStyle: .alert )
+        
+        // Define the action that should take place in the new alert
+        let action = UIAlertAction( title: "Add Item", style: .default ) { (action) in
+            // append the todo user has entered in the textField to the itemsArray
+            self.itemArray.append( textField.text! )        // because inside a closure
+            
+            // update the TableView to show the newly added todo list item
+            self.tableView.reloadData()
+        }   // end trailing closure for UIAlertAction
+        
+        // add a textField to the alert
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "Create new item"
+            textField = alertTextField                  // assigning to wider scope
+            
+            print( textField.text )
+        }   // end trailing closure for the alert's addTextField
+        
+        // add the action to the alert so that it is triggered at the right time
+        alert.addAction( action )
+        
+        // Finally, show the alert
+        present(alert, animated: true, completion: nil)
+    }   // end IBAction AddButtonPressed
 }   // end class TodoListViewController
